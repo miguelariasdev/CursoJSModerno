@@ -7,27 +7,6 @@ let tbodyCarrito = carrito.querySelector("tbody");
 
 let columnaProducto = document.querySelector('.card');
 
-function borrado() {
-
-    let boton = document.getElementById("borrar");
-    for (let i = 0; i < carritoProductos.length; i++) {
-        if (carritoProductos[i].titulo === boton.value) {
-
-            if (carritoProductos[i] > 0) {
-                carritoProductos.splice(carritoProductos[i] - 1, 1);
-            }
-            if (carritoProductos[i] === 0) {
-                carritoProductos.splice(carritoProductos[i], 1);
-            }
-
-        }
-    }
-
-    console.log(carritoProductos);
-    console.log(boton.value);
-
-}
-
 // Cuando se pulse un boton de añadir al carrito
 // captura los elementos padres de su div
 document.addEventListener("click", function (e) {
@@ -38,7 +17,7 @@ document.addEventListener("click", function (e) {
         let infoCard = e.target.parentNode;
         let card = infoCard.parentNode;
 
-        let img = card.querySelector("img"); // noi esta bien pillada la imagen aquí
+        let img = card.querySelector(".imagen-curso.u-full-width").src; // no esta bien pillada la imagen aquí
 
         let titulo = infoCard.childNodes[1].innerText; // texto del titulo
 
@@ -46,8 +25,7 @@ document.addEventListener("click", function (e) {
 
         let cantidad = 1; // indico la cantidad inicial
 
-        let borrar = "<button id='borrar' value='" + titulo + "'onclick='borrado()'></button>"
-
+        let id = infoCard.childNodes[9].getAttribute('data-id');
 
         // Busco si hay algun producto con ese mismo titulo
         let cantidadD = carritoProductos.find(producto => producto.titulo === titulo);
@@ -71,7 +49,7 @@ document.addEventListener("click", function (e) {
                 "titulo": titulo,
                 "precio": precio,
                 "cantidad": cantidad,
-                "borrar": borrar
+                "id": id
 
             }
 
@@ -79,12 +57,10 @@ document.addEventListener("click", function (e) {
 
         };
 
-        console.log(carritoProductos);
-
         for (let i = 0; i < carritoProductos.length; i++) {
 
-            tbodyCarrito.innerHTML += "<tr><td>" + carritoProductos[i].img + "</td><td>" + carritoProductos[i].titulo + "</td><td>"
-                + carritoProductos[i].precio + "</td><td>" + carritoProductos[i].cantidad + "</td><td>" + carritoProductos[i].borrar +
+            tbodyCarrito.innerHTML += "<tr><td>" + "<img src='" + carritoProductos[i].img + "' width='100px'></img></td><td>" + carritoProductos[i].titulo + "</td><td>"
+                + carritoProductos[i].precio + "</td><td>" + carritoProductos[i].cantidad + "</td><td> <button class='eliminar-curso' data-id=" + carritoProductos[i].id +">Borrar</button>" +
                 "</td></tr>";
 
         }
@@ -104,3 +80,31 @@ vaciarCarrito.addEventListener("click", function () {
 
 })
 
+// Borrar producto carrito
+
+tbodyCarrito.addEventListener("click" , function (e) {
+
+    if (e.target.classList.contains('eliminar-curso')) {
+        
+        let idEliminar = e.target.getAttribute('data-id');
+
+        carritoProductos =  carritoProductos.filter ( producto => producto.id !== idEliminar );
+
+        if (carritoProductos.length === 0) {
+
+            tbodyCarrito.innerHTML = "";
+
+        } else {
+
+            tbodyCarrito.innerHTML = "";
+            for (let i = 0; i < carritoProductos.length; i++) {
+
+                tbodyCarrito.innerHTML += "<tr><td>" + "<img src='" + carritoProductos[i].img + "' width='100px'></img></td><td>" + carritoProductos[i].titulo + "</td><td>"
+                + carritoProductos[i].precio + "</td><td>" + carritoProductos[i].cantidad + "</td><td> <button class='eliminar-curso' data-id=" + carritoProductos[i].id +">Borrar</button>" +
+                "</td></tr>";
+    
+            }
+        }
+    };
+
+});
